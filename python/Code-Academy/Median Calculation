@@ -1,0 +1,17 @@
+def median(listnumbers):
+    listnumbers = sorted(listnumbers)
+    numchars = len(listnumbers)
+    evenodd = 0 # even is 0, odd is 1
+   
+    if numchars %2 == 0:
+        evenodd = 0
+    else:
+        evenodd = 1
+   
+    if numchars == 1:
+        return listnumbers[0]
+    elif evenodd == 0:
+        return float(listnumbers[(numchars/2)-1] + listnumbers[(numchars/2)])/2
+    elif evenodd == 1:
+        return listnumbers[((numchars+1)/2)-1]
+         
