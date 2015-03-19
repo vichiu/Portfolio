@@ -1,0 +1,144 @@
+# A Physics Engine in Python
+# by Victor Chiu
+# March 15th, 2015
+#--------------------------------------
+
+# -- Importing Functionality 
+from random import randint
+import math # for trigonometry
+import time # for sleep
+
+# -- Definitions
+board = []  # Required for Code Academy
+onoff = 1   # On = 1, Off = 0
+gravity = -9.8 # meters/second^2
+CoFriction_Kinetic = {  "Wood": 0.2,
+                        "Metal": 0.5,
+                        "Rubber":  0.8 }
+Ball_Size = {   "Small": 1,
+                "Medium" : 2,
+                "Large" : 3 } # meters
+xrange = 41
+yrange = 16
+    
+
+# -- Functions
+def print_grid(my_ball):
+    grid = []
+    
+    for x in range(yrange):
+        grid.append(["."] * xrange)
+        
+        
+    for y in range(yrange):
+        if y%5 == 0:
+            grid[y][0] = str(y)
+    
+    for x in range(xrange):
+        if x%5 == 0:
+            grid[0][x] = str(x)
+    
+    if my_ball.yposition < yrange-1 and my_ball.yposition >= 0 and               my_ball.xposition < xrange-1 and my_ball.xposition >= 0:
+        grid[int(round(my_ball.yposition))][int(round(my_ball.xposition))] = "O"
+    else:
+        grid[int(round(yrange/2))][2:14] = "Out of Range"
+        
+    for row in reversed(grid):
+        print " ".join(row)
+
+def update_ball(my_ball, t):
+    
+    if t == 0:    
+        return my_ball
+    else:
+        t = 0.2
+                        
+        # Calculate net acceleration
+        my_ball.xacceleration = 0
+        my_ball.yacceleration = gravity
+        
+        # Calculate new velocity
+        my_ball.xvelocity = my_ball.xvelocity + my_ball.xacceleration*t
+        my_ball.yvelocity = my_ball.yvelocity + my_ball.yacceleration*t
+        
+        # Calculate new position
+        my_ball.xposition = my_ball.xposition + my_ball.xvelocity*t + (0.5 * my_ball.xacceleration*(t**2))
+        my_ball.yposition = my_ball.yposition + my_ball.yvelocity*t + (0.5 * my_ball.yacceleration*(t**2))
+
+        # Check if we're bouncing
+        if my_ball.yposition < 0:
+            my_ball.yvelocity = -my_ball.yvelocity
+            my_ball.yposition = -my_ball.yposition
+            my_ball.spinvelocity = my_ball.spinvelocity + (CoFriction_Kinetic[my_ball.material] * gravity * my_ball.xvelocity * t) / ((0.4) * Ball_Size[my_ball.size]*Ball_Size[my_ball.size])
+            my_ball.xvelocity = my_ball.xvelocity + CoFriction_Kinetic[my_ball.material] * gravity * t
+            print 'Bounce Bottom'
+            # F = ma; a = F/m; a = u*m*g/m; a = u*g
+            # F = ma; Ffriction = uFnormal = u*ma; t = Ffriction*radius
+            # t = Ia; I of sphere = (2/5)mr^2; Fv = tw
+            # u*m*a * vel = (2/5)mr^2 * w
+            # spinvelocity = (u*m*a * vel) / (2/5)mr^2
+            # spinvelocity = (u*g * vel) / (2/5)r^2
+            # We'll do more here later
+        
+        if my_ball.yposition > yrange-1:
+            my_ball.yvelocity = -my_ball.yvelocity
+            my_ball.yposition = (yrange-1)+((yrange-1)-my_ball.yposition)
+            print 'Bounce Top'
+            
+        if my_ball.xposition < 0:
+            my_ball.xvelocity = -my_ball.xvelocity
+            my_ball.xposition = -my_ball.xposition
+            print 'Bounce Left'
+        
+        if my_ball.xposition > xrange-1:
+            my_ball.xvelocity = -my_ball.xvelocity
+            my_ball.xposition = (xrange-1)+((xrange-1)-my_ball.xposition)
+            print 'Bounce Right'
+        
+        return my_ball
+    
+# -- Classes
+class ball(object):
+    
+    def __init__(self, xposition, yposition, xvelocity, yvelocity):
+        self.xposition = xposition
+        self.yposition = yposition
+        self.xvelocity = xvelocity
+        self.yvelocity = yvelocity
+        self.xacceleration = 0
+        self.yacceleration = 0
+        self.spinvelocity = 0
+        self.spinacceleration = 0
+        self.size = "Small"
+        self.material = "Metal"
+        self.mass = 25 #g, later to be calculated based on size/material
+        
+# -- Main
+print "Let's throw a ball!"
+
+while onoff:
+    # Initialize
+    height = int(raw_input("Height of Ball (m):"))
+    i_velocity = int(raw_input("Velocity (m/s):"))
+    i_angle = math.radians(int(raw_input("Angle (example: '90' is directly Up):")))
+    my_ball = ball(0, height, math.cos(i_angle)*i_velocity,math.sin         (i_angle)*i_velocity )
+    
+    # Begin Simulation
+    t = 0 #seconds
+    while t < 16:
+        
+        
+        my_ball = update_ball(my_ball, time)
+        print 't = %i, x = %0.2f, y = %0.2f, xv = %i, yv = %i, xa = %i, ya = %i, spin = %0.2f' % (t, my_ball.xposition, my_ball.yposition, my_ball.xvelocity, my_ball.yvelocity, my_ball.xacceleration, my_ball.yacceleration, my_ball.spinvelocity)
+        print_grid(my_ball)
+        
+        time.sleep(0.5)
+        t+=1
+           
+    # Check if user wishes to continue    
+    if str(raw_input("Throw Again? (Y/N): ")).upper() == "N" :
+        onoff = 0
+    else:
+        onoff = 1
+    
+    
