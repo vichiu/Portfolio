@@ -1,0 +1,17 @@
+Using python, I created a very basic ASCII-based physics engine that simulates the bouncing of one or more ball objects
+within a user-defined grid using kinematic equations.  This was developed purely as a personal exercise in python.
+
+Programming Features:
+- Object-oriented classes
+- Called functions
+- Imported functions
+- Conditional for/while loops
+- User input
+- Error handling
+- Global and local variables
+- Array manipulation
+- Position, velocity, acceleration, and power in two dimensional vector space
+- Rotational velocity, acceleration, inertia, and power
+- Frictional forces based on material type
+- Bounded bouncing behavior
+- Real-time kinematic calculations (not predefined)
