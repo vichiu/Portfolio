@@ -11,3 +11,13 @@ write_file.close()
 # Try to read from the file
 print read_file.read()
 read_file.close()
+
+##################################################
+
+with open("text.txt","r+") as my_file:
+    my_file.write("bwwbwuowijwlkjwlkwjlwkjwlkjwlkwjwlkjw")
+   
+if not my_file.closed:
+    my_file.close()
+   
+print my_file.closed
