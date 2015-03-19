@@ -1,0 +1,15 @@
+def censor(text, word):
+    newstring = ""
+    active = 0
+    wordlength = len(word)
+    for numchar in range(len(text)):
+        if text[numchar:numchar+wordlength] == word:
+            active = len(word)-1
+            newstring += "*"
+        elif active > 0:
+            active -= 1
+            newstring += "*"
+        else:
+            newstring += text[numchar]
+    return newstring  
+    
